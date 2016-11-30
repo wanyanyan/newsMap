@@ -730,7 +730,7 @@ input:-moz-placeholder { text-align: center; }
 }
 
 .details table tr {
-  line-height :15px;
+  line-height :10px;
 }
 
 .details table th{
