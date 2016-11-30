@@ -73,6 +73,8 @@ export default {
           data.size = (data.size / 1024).toFixed(2) + 'KB';
         }
         data.upload_at = util.dateFormat(new Date(data.upload_at));
+        var temp = ['新闻地图'];
+        this.options.Vue.patchUpload(data.upload_id,{'tags':temp});
         this.options.Vue.uploads.unshift(data);
       }
       if(this.options.Vue.uploadStatus.current_file===(this.options.Vue.uploadStatus.total_files+1)){

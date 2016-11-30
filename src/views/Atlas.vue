@@ -12,10 +12,8 @@
         </div>
 
         <foxgis-conditions :location_tags="location_tags" :year_tags="year_tags" :theme_tags="theme_tags" @condition-select = "conditionSelect"></foxgis-conditions>
-
       </div>
       
-
       <div class="search-results mdl-grid">
         <div class="atlas-container">
           <div v-for='u in pageConfig.page_item_num' v-if="((pageConfig.current_page-1)*pageConfig.page_item_num+$index) < displayUploads.length" track-by="$index">
@@ -187,6 +185,7 @@ export default {
       this.$http({ url: url, method: 'GET', headers: { 'x-access-token': access_token } })
       .then(function(response) {
         var data = response.data;
+        data = this.dealData(data,1);
         callback(data);
       }, function(response) {
         this.$broadcast('mailSent', { message: '获取图集失败！',timeout:3000 });
@@ -280,7 +279,7 @@ export default {
       this.$http({ url: url, method: 'GET', headers: { 'x-access-token': access_token } })
       .then(function(response) {
         if (response.data.length > 0) {
-          var data = response.data;
+          var data = this.dealData(response.data,1);
           data = data.map(function(d) {
             if (d.size / 1024 > 1024) {
               d.size = (d.size / 1048576).toFixed(2) + 'MB';
@@ -316,6 +315,85 @@ export default {
       }, function(response) {
         this.$broadcast('mailSent', { message: '获取图集失败！',timeout:3000 });
       });
+    },
+
+    dealData: function(data,status){
+      //对数据进行处理，提取新闻地图数据,status(1:提取upload,2:提取所有)
+      var tempUpload = [];
+      var tempLocation = [];
+      var tempYear = [];
+      var tempTheme = [];
+      for(let i=0;i<data.length;i++){
+        if(_.indexOf(data[i].tags,'新闻地图')!==-1){
+          if(!data[i].location){
+            data[i].location = "未指定";
+          }
+          if(!data[i].year){
+            data[i].year = "未指定";
+          }
+          tempUpload.push(data[i]);
+        } 
+      }
+      if(status === 1){
+        return tempUpload;
+      }
+      var tempdata1 = [];
+      var tempdata2 = [];
+      var tempdata3 = [];
+      for(let j=0;j<tempUpload.length;j++){
+        //获取制图区域统计信息
+        tempdata1.push(tempUpload[j].location);
+        //获取制图年份统计信息
+        tempdata2.push(tempUpload[j].year);
+        //获取主题词统计信息
+        tempdata3 = tempdata3.concat(tempUpload[j].tags);
+      }
+      var tempdata4 = _.uniq(tempdata1);
+      for(let s=0;s<tempdata4.length;s++){
+        var test = {
+          'location': tempdata4[s],
+          'total': 0
+        };
+        for(let t=0;t<tempdata1.length;t++){
+          if(tempdata4[s] ===  tempdata1[t]){
+            test.total += 1;
+          }
+        }
+        tempLocation.push(test);
+      }
+      tempdata4 = _.uniq(tempdata2);
+      for(let p=0;p<tempdata4.length;p++){
+        var test = {
+          'year': tempdata4[p],
+          'total': 0
+        };
+        for(let q=0;q<tempdata2.length;q++){
+          if(tempdata4[p] ===  tempdata2[q]){
+            test.total += 1;
+          }
+        }
+        tempYear.push(test);
+      }
+      tempdata4 = _.uniq(tempdata3);
+      for(let m=0;m<tempdata4.length;m++){
+        var test = {
+          'tag': tempdata4[m],
+          'total': 0
+        };
+        for(let n=0;n<tempdata3.length;n++){
+          if(tempdata4[m] ===  tempdata3[n]){
+            test.total += 1;
+          }
+        }
+        tempTheme.push(test);
+      }
+      var result = {
+        'upload': tempUpload,
+        'location': tempLocation,
+        'year': tempYear,
+        'theme': tempTheme
+      }
+      return result
     }
     
   },
@@ -404,64 +482,14 @@ export default {
           d.createdAt = date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate();
           return d;
         })
-        this.uploads = data;
-        for(let i=0;i<this.uploads.length;i++){
-          if(!this.uploads[i].location){
-            this.uploads[i].location = "未指定";
-          }
-          if(!this.uploads[i].year){
-            this.uploads[i].year = "未指定";
-          }
-        }
+        var result = this.dealData(data,2);
+        this.uploads = result.upload;
+        this.location_tags = result.location;
+        this.year_tags = result.year;
+        this.theme_tags = result.theme;
       }
     }, function(response) {
       this.$broadcast('mailSent', { message: '获取图集失败！',timeout:3000 });
-    });
-
-    //获取制图区域统计信息
-    var locationUrl = SERVER_API.stats+"/location";
-    this.$http({ url: locationUrl, method: 'GET', headers: { 'x-access-token': access_token } })
-    .then(function(response) {
-      if (response.data.length > 0) {
-        var data = response.data;
-        for(let i=0;i<data.length;i++){
-          if(!data[i].location){
-            data[i].location = "未指定";
-          }
-        }
-        this.location_tags = data;
-      }
-    },function(response){
-      this.$broadcast('mailSent', { message: '获取制图地区失败！',timeout:3000 });
-    });
-
-    //获取制图年份统计信息
-    var yearUrl = SERVER_API.stats+"/year";
-    this.$http({ url: yearUrl, method: 'GET', headers: { 'x-access-token': access_token } })
-    .then(function(response) {
-      if (response.data.length > 0) {
-        var data = response.data;
-        for(let i=0;i<data.length;i++){
-          if(!data[i].year){
-            data[i].year = "未指定";
-          }
-        }
-        this.year_tags = data;
-      }
-    },function(response){
-      this.$broadcast('mailSent', { message: '获取制图年份失败！',timeout:3000 });
-    });
-
-    //获取主题词统计信息
-    var tagUrl = SERVER_API.stats+"/tags";
-    this.$http({ url: tagUrl, method: 'GET', headers: { 'x-access-token': access_token } })
-    .then(function(response) {
-      if (response.data.length > 0) {
-        var data = response.data;
-        this.theme_tags = data;
-      }
-    },function(response){
-      this.$broadcast('mailSent', { message: '获取主题词失败！',timeout:3000 });
     });
   },
 
@@ -680,7 +708,7 @@ input:-moz-placeholder { text-align: center; }
 }
 
 .header-info img{
-  width: 300px;
+  width: 260px;
   height: 210px;
 }
 

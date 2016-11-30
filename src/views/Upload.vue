@@ -46,11 +46,8 @@
             </div>
           </div>
         </div>
-
       </div>
       
-
-
       <div id="batch-btn-box">
         <div id="select-button">
           <a class="select-btn" v-on:click.stop.prevent="selectAll">
@@ -389,7 +386,7 @@ export default {
       this.$http({url:url,method:'PATCH',data:data,headers:{'x-access-token':access_token}})
       .then(function(response){
         if(response.ok){
-          this.$broadcast('mailSent', { message: '编辑成功！',timeout:3000 });
+          //this.$broadcast('mailSent', { message: '编辑成功！',timeout:3000 });
         }
       }, function(response) {
         this.$broadcast('mailSent', { message: '编辑失败！',timeout:3000 });
@@ -432,8 +429,7 @@ export default {
         for(let i = 0;i<this.displayUploads.length;i++){
           this.displayUploads[i].checked=true;
         }
-      }
-      
+      } 
     },
 
     inverseSelect:function(){//反选
