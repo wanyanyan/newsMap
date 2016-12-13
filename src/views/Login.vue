@@ -2,7 +2,7 @@
 <div>
   <div class="bac">
     <div class="title">
-      <span>辅助决策用图在线审查系统</span>
+      <span>新闻地图服务系统</span>
     </div>
     <div class="login-outer">
       <div class='login-inner'>
@@ -120,7 +120,7 @@ export default {
   width: 100%;
   height: 100%;
   min-height: 600px;
-  background-image: url("../../static/images/1480145963789.jpg");
+  background-image: url("../../static/images/background.jpg");
   background-repeat: round;
 }
 .title{

@@ -3,11 +3,11 @@
   <mdl-snackbar display-on="mailSent"></mdl-snackbar>
   <foxgis-layout>
     <div class="content">
-      <h5><i class="material-icons">image</i><span>决策用图</span></h5>
+      <h5><i class="material-icons">image</i><span>新闻地图</span></h5>
       <div class="upload-head">
         <div class="search">
           <foxgis-search :placeholder="'输入搜索关键字'" :value="searchKeyWords" :search-key-words.sync="searchKeyWords"></foxgis-search>
-          <div id="picker" ><i class="material-icons">file_upload</i>上传决策用图
+          <div id="picker" ><i class="material-icons">file_upload</i>上传新闻地图
           </div>
         </div>
         <div class='progress-bar' style="display:none">
@@ -683,7 +683,9 @@ export default {
       Vue:that,
       formData:{//参数
         year:new Date().getFullYear(),
-        location:Cookies.get('location')?Cookies.get('location'):''
+        location:Cookies.get('location')?Cookies.get('location'):'',
+        scope:'public',
+        tags:['新闻地图']
       }
     }
     commonMethod.uploaderData(option,'upload');

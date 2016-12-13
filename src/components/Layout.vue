@@ -5,7 +5,7 @@
       <div class="header-top">
         <div class="header">
           <div class="base-title">
-            <span>辅助决策用图服务系统</span>
+            <span>新闻地图服务系统</span>
           </div>
           <div class="contact-us">
             <a href="javascript:void(0);">关于我们 </a>|
@@ -16,7 +16,7 @@
       </div>
       <div class="mdl-layout__header-row">
         <div class="mdl-layout-title">
-          <span>辅助决策用图</span>
+          <span>新闻地图</span>
         </div>
         <nav class="mdl-navigation">
           <a class="mdl-navigation__link" v-link="{ path: '/atlas' }" v-bind:class="username==undefined?'disabled':''">
