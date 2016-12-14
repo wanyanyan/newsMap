@@ -100,15 +100,16 @@ export default {
 }
 
 .header-top{
-  background-color: #1f57a2;
+  background-color: #036BDE;
   height: 25px;
+  width: 100%;
+  background-image: url("../../static/images/header.jpg");
+  background-repeat: no-repeat;
+  background-position: 65px -10px;
 }
 .header-top .header{
   width: 1000px;
   height: 100%;
-  background-image: url("../../static/images/header.jpg");
-  background-repeat: no-repeat;
-  background-position: 65px -10px;
   margin:0 auto;
 }
 .base-title{
